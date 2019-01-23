@@ -1,0 +1,128 @@
+output_file cl_CustomLog = new output_file;
+
+array		<string> cl_columnName[0];							# Custom Log Column Names
+array		<string> cl_columnValue[0];						# Custom Log Column Values
+
+# Replaces all semicolons by colons.
+# And since recently also periods by commas for excel...
+sub string logSafe( string haystack )
+ begin
+ 	loop 
+		int i = 1
+	 until 
+		i > haystack.count() 
+	 begin
+		if( haystack.substring( i, 1 ) == ";" )
+		 then
+			haystack.set_char( i, ':' );
+		 end;
+		if( haystack.substring( i, 1 ) == "." )
+		 then
+			haystack.set_char( i, ',' );
+		 end;
+		i = i + 1;
+	 end;
+	
+	return haystack;
+ end;
+
+
+sub startCustomLogFile
+ begin
+ 	string CL_FileName = "";
+ 	string outputLine = "";
+ 	
+	CL_FileName = logfile.filename();													# get the current presentation log file name
+	
+	if(CL_FileName == "") then																# prevent errors when running from editor
+		CL_FileName = "RunningFromEditor.txt";											# since no log file is precent then
+	end;
+	
+	CL_FileName = CL_FileName.substring(1, CL_FileName.count() - 4);		# solved bug with '.' in pathname
+	CL_FileName = CL_FileName + ".csv";													# add "CL_" to the beginning and ".csv" to the end
+	
+	if cl_CustomLog.open(CL_FileName, 0, false) then 									# open custom log file
+		# write header if the file is new	
+		loop 
+			int i = 1
+		 until 
+			i > cl_columnName.count() 
+		 begin		
+			outputLine = outputLine + cl_columnName[ i ];
+			if( i < cl_columnName.count() ) then
+				outputLine = outputLine + ";";
+			 end;
+			
+			i = i + 1;
+		 end;
+		cl_CustomLog.print( outputLine + "\n" );		 
+ 	 else
+		# else append to the existing file
+		cl_CustomLog.open(CL_FileName, file_append, true);								
+	 end;		 
+end;
+
+
+sub addColumn( string name )
+ begin
+	cl_columnName.add(  name   );
+	cl_columnValue.add( "" );
+ end;
+
+# VERY IMPORTANT
+sub initCustomLog
+ begin
+	startCustomLogFile();
+ end;	
+
+sub bool setColumn( string name, string value )
+ begin
+	loop 
+		int i = 1
+	 until 
+		i > cl_columnName.count() 
+	 begin
+		if( cl_columnName[ i ] == name ) then
+			cl_columnValue[ i ] = value;
+			return true;
+		 end;
+		
+		i = i + 1;
+	 end;
+	
+	return false;
+ end;
+ 
+sub resetColumns
+ begin
+	loop 
+		int i = 1
+	 until 
+		i > cl_columnName.count() 
+	 begin
+		cl_columnValue[ i ] = "";
+		i = i + 1;
+	 end;	
+ end;
+ 
+sub writeLine
+ begin
+	string outputLine = "";
+ 
+	loop 
+		int i = 1
+	 until 
+		i > cl_columnName.count() 
+	 begin		
+		outputLine = outputLine + logSafe( cl_columnValue[ i ] );
+		if( i < cl_columnName.count() ) then
+			outputLine = outputLine + ";";
+		 end;
+		
+		i = i + 1;
+	 end;	
+
+	cl_CustomLog.print( outputLine + "\n" );				 
+ end;
+		
+	

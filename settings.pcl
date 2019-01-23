@@ -1,0 +1,48 @@
+## 
+## Configuration/Parameters for CNV-SAT EEG experiment
+##
+## Make sure that in the Settings lab, two responses are specified:
+##
+## the first response is linked to dots moving to the LEFT
+## the second response is linked to dots moving to the RIGHT.
+##
+## Hedderik van Rijn, 111112
+##
+
+## Duration variables
+array <int>		blank_dur[2] = {3000,3500}; # random number
+array <int>		cue_dur[2] = {1500, 2000};
+int				move_duration = 2500; # max 2500
+int				pre_fb_duration = 200;
+int				fb_duration = 1000;
+
+array <int> 	blank_dur_palmer[6] = {500,1000};
+array <int>		cue_dur_palmer[6] = {1500,2000};
+int				move_duration_palmer = 2500;
+int				dot_freq = 50;
+
+## Messages:
+string			tbreak="Short break \n Press any response button to continue";
+
+### Number of trials ###
+int trial_total=12; # must be dividable by 3 and by number of blocks
+int trial_control = trial_total/3; 
+int trial_cued = trial_total - trial_control;
+
+int trial_training = 12; # must be dividable by 3
+
+int trials_palmer = 240;
+int n_blocks_palmer = 4;
+int trial_per_block_palmer = trials_palmer/n_blocks_palmer;
+array<int> coh_levels[5] = {1,5,10,15,20,40,80};
+array<int> coh_blocks[5] = {20, 40, 40, 40, 40, 40, 20};
+
+
+int n_blocks=4;
+int trial_per_block= trial_total / n_blocks;
+int no_fbtrials = 10; # number of trials between each feedback
+
+## Stimuli:
+int numdots=120; ## Total number of dots
+#int moving_size=50; ## Number of moving dots
+double validity = 0.8; # validity of response cues
